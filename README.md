@@ -6,6 +6,8 @@ This is an e-commerce platform for baking/grilling/tandoor equipments and realte
 
 click here for backend API information: [API information](./docs/apiInfo.md)
 
+click here for models schema to be used: [Models](./docs/models.md)
+
 ## Roadmap / Milestones
 
 - [x] Step 1 : Add readme for database, app features and api end points
