@@ -4,7 +4,7 @@ A full stack app with Node.js Express, React, and Mongodb
 
 This is an e-commerce platform for baking/grilling/tandoor equipments and realted products : [App Features](./docs/features.md)
 
-click here for backend API information: [API information](./docs/features.md)
+click here for backend API information: [API information](./docs/apiInfo.md)
 
 ## Roadmap / Milestones
 
