@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { dbConnect } = require("./db/db.connect");
 const category = require("./routes/categories.router");
-
+const product = require("./routes/product.router");
 const app = express();
 
 app.use(express.json());
@@ -20,6 +20,7 @@ app.use(
 );
 
 app.use("/api/v1/categories", category.router);
+app.use("/api/v1/products", product.router);
 
 const PORT = process.env.PORT || 3000;
 (async () => {
