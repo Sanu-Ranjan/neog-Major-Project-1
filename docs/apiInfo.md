@@ -3,14 +3,14 @@
 **Product Routes** (`/api/v1/products`)
 
 - `GET "/"` : get all products
-- `GET "/id/:id"` : get a particular product by id
+- `GET "/:productId"` : get a particular product by id
 - `POST "/"` : add product/products
 
 **Category Routes** (`/api/v1/category`)
 
 - `GET "/featured"` : get all featured categories
-- `GET "/list"` : get all categories
-- `GET "/id/:id"` : get category by id
+- `GET "/"` : get all categories
+- `GET "/:categoryId"` : get category by id
 - `POST "/"` : add category/categories
 
 **Cart Routes** (`/api/v1/cart`)
