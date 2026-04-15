@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { dbConnect } = require("./db/db.connect");
+const category = require("./routes/categories.router");
 
 const app = express();
 
@@ -18,9 +19,7 @@ app.use(
   }),
 );
 
-app.get("/", (req, res) => {
-  res.send("Welcome to express server");
-});
+app.use("/api/v1/categories", category.router);
 
 const PORT = process.env.PORT || 3000;
 (async () => {
