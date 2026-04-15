@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   sizes: [{ type: String, required: true }],
   inStock: { type: Boolean, required: true },
   rating: { type: Number, required: true },
-  category: [{ type: mongoose.Schema.Types.ObjectId, ref: "Categories" }],
+  category: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
 });
 
 const Product = mongoose.model("Product", productSchema);
