@@ -26,13 +26,12 @@
 ### Cart
 
 - \_id (PK)
-- productId: ObjectId (ref -> Products)
-- quantity: Number
+- items:array of {productId: ObjectId (ref -> Products),quantity: Number}
 
 ### Wishlist
 
 - \_id (PK)
-- productId: ObjectId (ref -> Products)
+- items:[ ObjectId (ref -> Products)]
 
 ### Addresses
 
