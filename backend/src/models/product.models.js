@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { Cart } = require("./cart.models");
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -9,8 +8,8 @@ const productSchema = new mongoose.Schema({
   discount: { type: Number, required: true },
   image: { type: String, required: true },
   sizes: [{ type: String, required: true }],
-  inStock: { type: Boolean, require: true },
-  rating: { type: Number, require: true },
+  inStock: { type: Boolean, required: true },
+  rating: { type: Number, required: true },
   category: [{ type: mongoose.Schema.Types.ObjectId, ref: "Categories" }],
 });
 
