@@ -6,7 +6,7 @@ const addressSchema = new Schema({
   pincode: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
-  assressLine: { type: String, required: true },
+  addressLine: { type: String, required: true },
   type: { type: String, required: true },
 });
 
