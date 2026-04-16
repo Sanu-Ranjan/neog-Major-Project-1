@@ -4,6 +4,11 @@ require("dotenv").config();
 const { dbConnect } = require("./db/db.connect");
 const category = require("./routes/categories.router");
 const product = require("./routes/product.router");
+const cart = require("./routes/cart.routes");
+const wishlist = require("./routes/wishlist.routes");
+const address = require("./routes/address.routes");
+const order = require("./routes/order.routes");
+
 const app = express();
 
 app.use(express.json());
@@ -21,6 +26,10 @@ app.use(
 
 app.use("/api/v1/categories", category.router);
 app.use("/api/v1/products", product.router);
+app.use("/api/v1/cart", cart.router);
+app.use("/api/v1/wishlist", wishlist.router);
+app.use("/api/v1/address", address.router);
+app.use("/api/v1/orders", order.router);
 
 const PORT = process.env.PORT || 3000;
 (async () => {
