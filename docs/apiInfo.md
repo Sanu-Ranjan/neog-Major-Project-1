@@ -15,15 +15,16 @@
 
 **Cart Routes** (`/api/v1/cart`)
 
-- `GET "/"` : get all items in cart
-- `POST "/"` : add an item to cart
-- `DELETE "/"` : delete an item from cart
+- `GET "/"` : get all items in the cart
+- `POST "/"` : add a cart
+- `PUT "/"` : update cart(send updated cart each time)
 
 **Wishlist Routes** (`/api/v1/wishlist`)
 
-- `GET "/"` : get all wishlisted items
-- `POST "/"` : add an item to wishlist
-- `DELETE "/"` : remove an item from wishlist
+- `GET "/"` : get wishlist with all items populated
+- `POST "/"` : create wishlist with initial items
+- `POST "/item"` : add a single item to existing wishlist
+- `DELETE "/"` : remove a single item from wishlist
 
 **Address Routes** (`/api/v1/address`)
 
