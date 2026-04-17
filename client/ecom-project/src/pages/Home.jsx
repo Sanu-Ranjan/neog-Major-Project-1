@@ -1,5 +1,7 @@
 // pages/Home.jsx
 import { CategoryCard } from "../components/CategoryCard";
+import { Error } from "../components/Error";
+import { Loading } from "../components/Loading";
 import { Navbar } from "../components/NavBar";
 import { API_BASE_URL } from "../constants/index";
 import { useFetch } from "../hooks/useFetch";
@@ -11,26 +13,9 @@ const Home = () => {
   );
   const navigate = useNavigate();
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "60vh" }}
-      >
-        <div className="spinner-border text-warning" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
-  if (error) {
-    return (
-      <div className="text-center mt-5">
-        <p className="text-danger">Something went wrong. Please try again.</p>
-      </div>
-    );
-  }
+  if (error) return <Error />;
 
   return (
     <>
