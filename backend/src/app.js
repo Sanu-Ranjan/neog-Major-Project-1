@@ -12,14 +12,17 @@ const app = express();
 
 app.use(express.json());
 
-const ORIGIN = process.env.ORIGIN;
-if (!ORIGIN) {
+const ALLOWED_ORIGINS = process.env.ORIGIN;
+if (!ALLOWED_ORIGINS) {
   console.log("Error : allowed ORIGIN not set");
   process.exit(1);
 }
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
 app.use(
   cors({
-    origin: ORIGIN,
+    origin: allowedOrigins,
   }),
 );
 
