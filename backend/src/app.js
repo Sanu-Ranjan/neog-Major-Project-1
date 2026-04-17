@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 
-const ALLOWED_ORIGINS = process.env.ORIGIN;
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS;
 if (!ALLOWED_ORIGINS) {
   console.log("Error : allowed ORIGIN not set");
   process.exit(1);
