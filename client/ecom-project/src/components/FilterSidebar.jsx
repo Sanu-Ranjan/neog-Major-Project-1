@@ -25,6 +25,22 @@ const FilterSidebar = ({
         <p className="fw-semibold mb-2" style={{ fontSize: "14px" }}>
           Category
         </p>
+        <div className="form-check mb-1">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="All"
+            checked={filters.categories.includes("All")}
+            onChange={() => onFilterChange("category", "All")}
+          />
+          <label
+            className="form-check-label"
+            htmlFor="All"
+            style={{ fontSize: "13px" }}
+          >
+            All
+          </label>
+        </div>
         {categories?.map((category) => (
           <div className="form-check mb-1" key={category._id}>
             <input
