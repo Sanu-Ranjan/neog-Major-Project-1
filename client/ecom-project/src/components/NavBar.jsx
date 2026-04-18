@@ -1,9 +1,11 @@
-// components/Navbar.jsx
 import { useNavigate } from "react-router-dom";
+
 import { LoginBtn } from "./LoginBtn";
 import { SearchBaar } from "./SearchBar";
-import { CartIcon } from "./cartIcon";
+import { CartIcon } from "./CartIcon";
 import { WishlistIcon } from "./WishlistIcon";
+import { ROUTES } from "../constants/index";
+
 const Navbar = () => {
   const navigate = useNavigate();
 
@@ -13,7 +15,7 @@ const Navbar = () => {
         <span
           className="fw-bold fs-5"
           style={{ cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          onClick={() => navigate(ROUTES.HOME)}
         >
           GrillMart 🏠
         </span>
