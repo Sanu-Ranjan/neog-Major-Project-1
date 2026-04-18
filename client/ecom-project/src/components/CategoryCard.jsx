@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 export const CategoryCard = ({ category }) => {
   const navigate = useNavigate();
   return (
-    <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={category._id}>
+    <div className="col-12 col-sm-6 col-md-4 col-lg-3">
       <div
         className="card border-0 rounded-3 overflow-hidden shadow-sm"
         style={{ cursor: "pointer" }}
