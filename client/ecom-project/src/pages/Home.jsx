@@ -59,7 +59,7 @@ const Home = () => {
         {/* category cards */}
         <div className="row g-3 justify-content-center">
           {data?.data?.categories?.map((category) => (
-            <CategoryCard category={category} />
+            <CategoryCard category={category} key={category._id} />
           ))}
         </div>
       </div>
