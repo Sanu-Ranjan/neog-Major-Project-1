@@ -1,9 +1,14 @@
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/index";
+
 export const CartIcon = () => {
+  const navigate = useNavigate();
+
   return (
     <div
       className="position-relative"
       style={{ cursor: "pointer" }}
-      onClick={() => navigate("/cart")}
+      onClick={() => navigate(ROUTES.CART)}
     >
       <span style={{ fontSize: "22px" }}>🛒</span>
       <span
