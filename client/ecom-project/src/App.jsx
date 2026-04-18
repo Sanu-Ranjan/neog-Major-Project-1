@@ -8,7 +8,7 @@ import {
   Cart,
   UserProfile,
 } from "./pages/index";
-
+import { SearchProvider } from "./contexts/SearchContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,7 +37,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <SearchProvider>
+      <RouterProvider router={router} />
+    </SearchProvider>
+  );
 }
 
 export default App;

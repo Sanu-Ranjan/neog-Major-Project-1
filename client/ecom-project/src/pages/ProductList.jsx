@@ -7,16 +7,17 @@ import { ProductCard } from "../components/ProductCard";
 import { Loading } from "../components/Loading";
 import { Error } from "../components/Error";
 import { FilterSidebar } from "../components/FilterSidebar";
+import { useSearch } from "../contexts/SearchContext";
 
 export const ProductList = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const categoryId = searchParams.get("category");
-
   const [filters, setFilters] = useState({
     categories: [],
     rating: 1,
     sort: "",
   });
+  const { search, clearSearch } = useSearch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryId = searchParams.get("category");
 
   const { data, loading, error } = useFetch(`${API_BASE_URL}/products`);
   const products = data?.data?.products;
@@ -40,6 +41,7 @@ export const ProductList = () => {
   const onClearFilters = () => {
     setFilters({ categories: [], rating: 1, sort: "" });
     setSearchParams({});
+    clearSearch();
   };
 
   let filteredProducts = categoryId
@@ -49,9 +51,13 @@ export const ProductList = () => {
     : products;
 
   if (filters.categories.length > 0) {
-    filteredProducts = filteredProducts?.filter(({ category }) =>
-      category.some(({ _id }) => filters.categories.includes(_id)),
-    );
+    if (filters.categories.includes("All")) {
+      filteredProducts = [...filteredProducts];
+    } else {
+      filteredProducts = filteredProducts?.filter(({ category }) =>
+        category.some(({ _id }) => filters.categories.includes(_id)),
+      );
+    }
   }
 
   if (filters.rating > 1) {
@@ -67,6 +73,12 @@ export const ProductList = () => {
   } else if (filters.sort === "high-to-low") {
     filteredProducts = [...(filteredProducts ?? [])].sort(
       (a, b) => b.price - a.price,
+    );
+  }
+
+  if (search != "") {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(search),
     );
   }
 
