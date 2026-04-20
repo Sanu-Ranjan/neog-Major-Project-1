@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-export const useFetch = (url, initialData = null) => {
-  const [data, setData] = useState(initialData);
+export const useFetch = (url, refresh) => {
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +17,6 @@ export const useFetch = (url, initialData = null) => {
       }
       setLoading(false);
     })();
-  }, [url]);
+  }, [url, refresh]);
   return { data, error, loading };
 };
