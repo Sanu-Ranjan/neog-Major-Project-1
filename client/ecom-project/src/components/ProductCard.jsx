@@ -1,7 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../constants/index";
+import { useWishlist } from "../contexts/WishlistContext";
+import { useState } from "react";
+
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+  const { data, addItem, wishlistSet, deleteItem } = useWishlist();
+
+  const isWishlisted = wishlistSet.has(product._id);
 
   return (
     <div
@@ -52,9 +58,17 @@ const ProductCard = ({ product }) => {
           <button className="btn btn-warning btn-sm fw-semibold flex-grow-1">
             Add to Cart
           </button>
-          <button className="btn btn-outline-secondary btn-sm px-3 ">
-            {/* //bi-heart-fill text-danger for selected hert */}
-            <i className="bi bi-heart"></i>
+          <button
+            className="btn btn-outline-secondary btn-sm px-3 "
+            onClick={() =>
+              isWishlisted ? deleteItem(product._id) : addItem(product._id)
+            }
+          >
+            {isWishlisted ? (
+              <i className="bi-heart-fill text-danger"></i>
+            ) : (
+              <i className="bi bi-heart"></i>
+            )}
           </button>
         </div>
       </div>
