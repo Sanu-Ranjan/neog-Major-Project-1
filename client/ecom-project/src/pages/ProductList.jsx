@@ -77,7 +77,7 @@ export const ProductList = () => {
   }
 
   if (search != "") {
-    filteredProducts = filteredProducts.filter((product) =>
+    filteredProducts = filteredProducts?.filter((product) =>
       product.name.toLowerCase().includes(search),
     );
   }
