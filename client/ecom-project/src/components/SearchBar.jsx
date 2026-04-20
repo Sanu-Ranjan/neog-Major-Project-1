@@ -9,7 +9,7 @@ export const SearchBaar = () => {
   const navigate = useNavigate();
 
   const pressEnter = (key) => {
-    if (key == "Enter") {
+    if (key == "Enter" && product != "") {
       navigate(ROUTES.PRODUCTS);
       setSearch(product.toLowerCase());
       setFocused(false);
