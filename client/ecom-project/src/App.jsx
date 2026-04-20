@@ -9,6 +9,7 @@ import {
   UserProfile,
 } from "./pages/index";
 import { SearchProvider } from "./contexts/SearchContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,9 +39,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <SearchProvider>
-      <RouterProvider router={router} />
-    </SearchProvider>
+    <WishlistProvider>
+      <SearchProvider>
+        <RouterProvider router={router} />
+      </SearchProvider>
+    </WishlistProvider>
   );
 }
 
