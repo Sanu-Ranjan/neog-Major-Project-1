@@ -5,13 +5,20 @@ import { Error } from "../components/Error";
 import { Navbar } from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../contexts/WishlistContext";
+import { useCart } from "../contexts/CartContext";
 
 export const Wishlist = () => {
   const { data, loading, error, deleteItem } = useWishlist();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const wishlist = data?.data?.wishlist?.[0];
   const items = wishlist?.items ?? [];
+
+  const moveToCart = async (id) => {
+    await addToCart(id);
+    await deleteItem(id);
+  };
 
   if (loading) return <Loading />;
   if (error) return <Error />;
@@ -82,7 +89,10 @@ export const Wishlist = () => {
                     </div>
 
                     <div className="mt-auto d-flex flex-column gap-2">
-                      <button className="btn btn-warning btn-sm fw-semibold">
+                      <button
+                        className="btn btn-warning btn-sm fw-semibold"
+                        onClick={() => moveToCart(item._id)}
+                      >
                         Move to Cart
                       </button>
                       <button

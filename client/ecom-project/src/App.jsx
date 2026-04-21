@@ -10,6 +10,7 @@ import {
 } from "./pages/index";
 import { SearchProvider } from "./contexts/SearchContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
+import { CartProvider } from "./contexts/CartContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -39,11 +40,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <WishlistProvider>
-      <SearchProvider>
-        <RouterProvider router={router} />
-      </SearchProvider>
-    </WishlistProvider>
+    <CartProvider>
+      <WishlistProvider>
+        <SearchProvider>
+          <RouterProvider router={router} />
+        </SearchProvider>
+      </WishlistProvider>
+    </CartProvider>
   );
 }
 

@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../constants/index";
+import { useCart } from "../contexts/CartContext";
 
 export const CartIcon = () => {
+  const { items } = useCart();
   const navigate = useNavigate();
 
   return (
@@ -15,7 +17,7 @@ export const CartIcon = () => {
         className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
         style={{ fontSize: "10px" }}
       >
-        0
+        {items?.length}
       </span>
     </div>
   );

@@ -2,10 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../constants/index";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useState } from "react";
+import { useCart } from "../contexts/CartContext";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { data, addItem, wishlistSet, deleteItem } = useWishlist();
+  const { addToCart } = useCart();
 
   const isWishlisted = wishlistSet.has(product._id);
 
@@ -55,7 +57,10 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="mt-auto d-flex gap-2">
-          <button className="btn btn-warning btn-sm fw-semibold flex-grow-1">
+          <button
+            className="btn btn-warning btn-sm fw-semibold flex-grow-1"
+            onClick={() => addToCart(product._id)}
+          >
             Add to Cart
           </button>
           <button
