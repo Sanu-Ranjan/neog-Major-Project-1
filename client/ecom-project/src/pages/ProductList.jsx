@@ -1,6 +1,6 @@
 import { Navbar } from "../components/NavBar";
 import { useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { API_BASE_URL, API_ROUTES } from "../constants";
 import { ProductCard } from "../components/ProductCard";
@@ -20,6 +20,13 @@ export const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryId = searchParams.get("category");
 
+  // Sync URL category param into filter state so checkbox reflects it
+  useEffect(() => {
+    if (categoryId) {
+      setFilters((prev) => ({ ...prev, categories: [categoryId] }));
+    }
+  }, [categoryId]);
+
   const { data, loading, error } = useFetch(
     `${API_BASE_URL}${API_ROUTES.products.getAll}`,
   );
@@ -32,6 +39,8 @@ export const ProductList = () => {
 
   const onFilterChange = (type, value) => {
     if (type === "category") {
+      // Clear URL category param when user manually changes category
+      setSearchParams({});
       setFilters((prev) => ({
         ...prev,
         categories: prev.categories.includes(value)
@@ -49,15 +58,12 @@ export const ProductList = () => {
     clearSearch();
   };
 
-  let filteredProducts = categoryId
-    ? products?.filter(({ category }) =>
-        category.some(({ _id }) => _id == categoryId),
-      )
-    : products;
+  // Single unified filtering — no more dual categoryId + filters.categories
+  let filteredProducts = products;
 
   if (filters.categories.length > 0) {
     if (filters.categories.includes("All")) {
-      filteredProducts = [...filteredProducts];
+      filteredProducts = [...(products ?? [])];
     } else {
       filteredProducts = filteredProducts?.filter(({ category }) =>
         category.some(({ _id }) => filters.categories.includes(_id)),
@@ -81,7 +87,7 @@ export const ProductList = () => {
     );
   }
 
-  if (search != "") {
+  if (search !== "") {
     filteredProducts = filteredProducts?.filter((product) =>
       product.name.toLowerCase().includes(search),
     );
@@ -91,6 +97,7 @@ export const ProductList = () => {
   if (error) return <Error />;
 
   const itemsCount = filteredProducts?.length ?? 0;
+
   return (
     <>
       <div className="d-flex flex-column" style={{ minHeight: "100vh" }}>
@@ -113,7 +120,7 @@ export const ProductList = () => {
                   Showing {itemsCount} products
                 </p>
               ) : (
-                <p className="text-center mb-3 " style={{ fontSize: "14px" }}>
+                <p className="text-center mb-3" style={{ fontSize: "14px" }}>
                   No Products Found
                 </p>
               )}
