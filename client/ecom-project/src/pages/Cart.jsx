@@ -38,7 +38,9 @@ export const Cart = () => {
       <div className="d-flex flex-column" style={{ minHeight: "100vh" }}>
         <Navbar />
         <div className="container py-4">
-          <h4 className="fw-bold mb-4">My Cart ({items.length})</h4>
+          <h4 className="fw-bold mb-4 text-center text-md-start">
+            My Cart ({items.length})
+          </h4>
 
           {items.length === 0 ? (
             <div className="text-center mt-5">

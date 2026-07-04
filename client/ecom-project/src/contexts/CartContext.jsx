@@ -78,7 +78,8 @@ export const CartProvider = ({ children }) => {
 
       if (data.success == true) {
         setRefresh((prev) => !prev);
-        toast("Item added to cart");
+        // Only toast when adding a new item, not when incrementing quantity
+        if (!found) toast("Item added to cart");
       } else {
         itemsRef.current = previousItems;
         console.log("Error updating cart : ", data.message);
@@ -118,7 +119,7 @@ export const CartProvider = ({ children }) => {
       }
       if (data.success == true) {
         setRefresh((prev) => !prev);
-        toast("Item removed from cart");
+        // No toast on quantity decrease
       } else {
         itemsRef.current = previousItems;
         console.log("Error updating cart : ", data.message);

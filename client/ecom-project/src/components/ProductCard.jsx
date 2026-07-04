@@ -51,7 +51,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="mt-auto d-flex gap-2">
-          <QuantityControls product={product} />
+          <QuantityControls product={product} listingMode={true} />
 
           <WishListButton product={product} wishlistSet={wishlistSet} />
         </div>
