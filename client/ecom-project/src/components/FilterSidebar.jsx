@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const FilterSidebar = ({
   categories,
   filters,
@@ -5,13 +7,15 @@ const FilterSidebar = ({
   onClearFilters,
   clearSearchParam,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const showAllProducts = () => {
     clearSearchParam();
     onFilterChange("category", "All");
   };
 
-  return (
-    <div className="p-3 border rounded-3">
+  const filterContent = (
+    <>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h6 className="fw-bold mb-0">Filters</h6>
         <span
@@ -133,7 +137,45 @@ const FilterSidebar = ({
           </label>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── MOBILE: collapsible with smooth transition ── */}
+      <div className="d-md-none p-3 border rounded-3">
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ cursor: "pointer" }}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          <h6 className="fw-bold mb-0">Filters</h6>
+          <span
+            className="text-warning fw-semibold"
+            style={{ fontSize: "13px" }}
+          >
+            {isOpen ? "▲ Hide" : "▼ Show"}
+          </span>
+        </div>
+
+        <div
+          style={{
+            overflow: "hidden",
+            maxHeight: isOpen ? "1000px" : "0",
+            opacity: isOpen ? 1 : 0,
+            transition: "max-height 0.35s ease, opacity 0.3s ease",
+          }}
+        >
+          <hr />
+          {filterContent}
+        </div>
+      </div>
+
+      {/* ── DESKTOP: always visible, no toggle ── */}
+      <div className="d-none d-md-block p-3 border rounded-3">
+        {filterContent}
+      </div>
+    </>
   );
 };
 

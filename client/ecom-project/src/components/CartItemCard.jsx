@@ -10,42 +10,44 @@ export const CartItemCard = ({ product, quantity }) => {
   const { addItem } = useWishlist();
 
   return (
-    <div className="card border shadow-sm p-3">
-      <div className="d-flex flex-column flex-sm-row gap-3">
+    <div className="card border-0 shadow-sm p-3 mb-2">
+      <div className="d-flex gap-3">
         <img
           src={product.image}
           alt={product.name}
           style={{
-            width: "120px",
-            height: "120px",
+            width: "100px",
+            height: "100px",
             objectFit: "contain",
             background: "#f8f8f8",
             borderRadius: "8px",
             cursor: "pointer",
+            flexShrink: 0,
           }}
           onClick={() => navigate(ROUTES.PRODUCT_DETAIL(product._id))}
         />
 
-        <div className="flex-grow-1">
-          <p
-            className="fw-semibold mb-1"
-            style={{ fontSize: "14px", cursor: "pointer" }}
-            onClick={() => navigate(ROUTES.PRODUCT_DETAIL(product._id))}
-          >
-            {product.name}
-          </p>
-
-          <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="fw-bold">₹{product.price}</span>
-            <span
-              className="text-muted text-decoration-line-through"
-              style={{ fontSize: "13px" }}
+        <div className="flex-grow-1 d-flex flex-column justify-content-between">
+          <div>
+            <p
+              className="fw-semibold mb-1"
+              style={{ fontSize: "14px", cursor: "pointer" }}
+              onClick={() => navigate(ROUTES.PRODUCT_DETAIL(product._id))}
             >
-              ₹{product.originalPrice}
-            </span>
-            <span className="text-success" style={{ fontSize: "13px" }}>
-              {product.discount}% off
-            </span>
+              {product.name}
+            </p>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span className="fw-bold">₹{product.price}</span>
+              <span
+                className="text-muted text-decoration-line-through"
+                style={{ fontSize: "13px" }}
+              >
+                ₹{product.originalPrice}
+              </span>
+              <span className="text-success" style={{ fontSize: "13px" }}>
+                {product.discount}% off
+              </span>
+            </div>
           </div>
 
           <CartItemBtns
