@@ -7,6 +7,7 @@ const cart = require("./routes/cart.routes");
 const wishlist = require("./routes/wishlist.routes");
 const address = require("./routes/address.routes");
 const order = require("./routes/order.routes");
+const ai = require("./routes/ai.routes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/v1/cart", cart.router);
 app.use("/api/v1/wishlist", wishlist.router);
 app.use("/api/v1/address", address.router);
 app.use("/api/v1/orders", order.router);
+app.use("/api/v1/ai", ai.router);
 
 module.exports = {
   app,

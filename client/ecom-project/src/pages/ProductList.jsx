@@ -9,6 +9,7 @@ import { Error } from "../components/Error";
 import { FilterSidebar } from "../components/FilterSidebar";
 import { useSearch } from "../contexts/SearchContext";
 import { Footer } from "../components/Footer";
+import { postData } from "../utils/postData";
 
 export const ProductList = () => {
   const [filters, setFilters] = useState({
@@ -19,6 +20,9 @@ export const ProductList = () => {
   const { search, clearSearch } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryId = searchParams.get("category");
+
+  const [aiResults, setAiResults] = useState(null); // null = not tried yet
+  const [aiLoading, setAiLoading] = useState(false);
 
   // Sync URL category param into filter state so checkbox reflects it
   useEffect(() => {
@@ -93,10 +97,37 @@ export const ProductList = () => {
     );
   }
 
+  const keywordSearchFailed =
+    search !== "" && !loading && !!products && filteredProducts?.length === 0;
+
+  // AI fallback search : only fires when keyword search found nothing
+  useEffect(() => {
+    if (!keywordSearchFailed) {
+      setAiResults(null);
+      return;
+    }
+    (async () => {
+      setAiLoading(true);
+      const { data, error } = await postData(
+        `${API_BASE_URL}${API_ROUTES.ai.search}`,
+        { query: search },
+      );
+      if (error || !data?.success) {
+        setAiResults({ products: [], message: "" });
+      } else {
+        setAiResults(data.data);
+      }
+      setAiLoading(false);
+    })();
+  }, [keywordSearchFailed, search]);
+
   if (loading) return <Loading />;
   if (error) return <Error />;
 
   const itemsCount = filteredProducts?.length ?? 0;
+  const showAiResults = keywordSearchFailed && aiResults?.products?.length > 0;
+
+  const displayProducts = showAiResults ? aiResults.products : filteredProducts;
 
   return (
     <>
@@ -119,6 +150,26 @@ export const ProductList = () => {
                 <p className="text-muted mb-3" style={{ fontSize: "14px" }}>
                   Showing {itemsCount} products
                 </p>
+              ) : keywordSearchFailed && aiLoading ? (
+                <div className="text-center my-4">
+                  <span className="spinner-border spinner-border-sm text-warning me-2" />
+                  <span style={{ fontSize: "14px" }}>
+                    No exact matches — looking for similar products…
+                  </span>
+                </div>
+              ) : showAiResults ? (
+                <div
+                  className="rounded-3 p-3 mb-3"
+                  style={{ background: "#fff8e1", fontSize: "14px" }}
+                >
+                  <i className="bi bi-stars text-warning me-2"></i>
+                  <span className="fw-semibold">
+                    No exact matches found, but here are similar products.
+                  </span>
+                  {aiResults.message && (
+                    <span className="text-muted"> {aiResults.message}</span>
+                  )}
+                </div>
               ) : (
                 <p className="text-center mb-3" style={{ fontSize: "14px" }}>
                   No Products Found
@@ -126,7 +177,7 @@ export const ProductList = () => {
               )}
 
               <div className="row g-3">
-                {filteredProducts?.map((product) => (
+                {displayProducts?.map((product) => (
                   <div className="col-12 col-sm-6 col-lg-4" key={product._id}>
                     <ProductCard product={product} />
                   </div>

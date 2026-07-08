@@ -50,4 +50,8 @@ export const API_ROUTES = {
     add: "/orders",
     delete: "/orders",
   },
+
+  ai: {
+    search: "/ai/search",
+  },
 };
