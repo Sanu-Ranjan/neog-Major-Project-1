@@ -1,17 +1,25 @@
-import { useState } from "react";
-import { useSearch } from "../contexts/SearchContext";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTES } from "../constants";
 
 export const SearchBaar = () => {
   const [focused, setFocused] = useState(false);
-  const { product, setSearch, setProduct } = useSearch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Keep the input in sync with the URL — so it reflects the active
+  // search whether the user typed it, followed a link, or hit back/forward.
+  const [value, setValue] = useState(searchParams.get("search") ?? "");
+
+  useEffect(() => {
+    setValue(searchParams.get("search") ?? "");
+  }, [searchParams]);
 
   const pressEnter = (key) => {
-    if (key == "Enter" && product != "") {
-      navigate(ROUTES.PRODUCTS);
-      setSearch(product.toLowerCase());
+    if (key == "Enter" && value != "") {
+      const next = new URLSearchParams(searchParams);
+      next.set("search", value.toLowerCase());
+      navigate(`${ROUTES.PRODUCTS}?${next.toString()}`);
       setFocused(false);
     }
   };
@@ -42,11 +50,11 @@ export const SearchBaar = () => {
             className="form-control"
             placeholder="Search Products"
             id="button-addon2"
-            value={product}
+            value={value}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onKeyDown={({ key }) => pressEnter(key)}
-            onChange={(e) => setProduct(e.target.value)}
+            onChange={(e) => setValue(e.target.value)}
           />
           <button
             className="btn btn-outline-secondary"

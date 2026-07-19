@@ -7,29 +7,22 @@ import { ProductCard } from "../components/ProductCard";
 import { Loading } from "../components/Loading";
 import { Error } from "../components/Error";
 import { FilterSidebar } from "../components/FilterSidebar";
-import { useSearch } from "../contexts/SearchContext";
 import { Footer } from "../components/Footer";
 import { postData } from "../utils/postData";
 
 export const ProductList = () => {
-  const [filters, setFilters] = useState({
-    categories: [],
-    rating: 1,
-    sort: "",
-  });
-  const { search, clearSearch } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const categoryId = searchParams.get("category");
+
+  // Every filter now lives in the URL — shareable, bookmarkable, refresh-safe.
+  const categoryParam = searchParams.get("category") ?? "";
+  const ratingParam = Number(searchParams.get("rating") ?? 1);
+  const sortParam = searchParams.get("sort") ?? "";
+  const searchParam = (searchParams.get("search") ?? "").toLowerCase();
+
+  const categories_selected = categoryParam ? categoryParam.split(",") : [];
 
   const [aiResults, setAiResults] = useState(null); // null = not tried yet
   const [aiLoading, setAiLoading] = useState(false);
-
-  // Sync URL category param into filter state so checkbox reflects it
-  useEffect(() => {
-    if (categoryId) {
-      setFilters((prev) => ({ ...prev, categories: [categoryId] }));
-    }
-  }, [categoryId]);
 
   const { data, loading, error } = useFetch(
     `${API_BASE_URL}${API_ROUTES.products.getAll}`,
@@ -41,66 +34,73 @@ export const ProductList = () => {
   );
   const categories = categoryData?.data?.categories;
 
+  // Every filter change writes straight into the URL.
   const onFilterChange = (type, value) => {
+    const next = new URLSearchParams(searchParams);
+
     if (type === "category") {
-      // Clear URL category param when user manually changes category
-      setSearchParams({});
-      setFilters((prev) => ({
-        ...prev,
-        categories: prev.categories.includes(value)
-          ? prev.categories.filter((c) => c !== value)
-          : [...prev.categories, value],
-      }));
-    } else {
-      setFilters((prev) => ({ ...prev, [type]: value }));
+      if (value === "All") {
+        next.delete("category");
+      } else {
+        const current = categories_selected;
+        const updated = current.includes(value)
+          ? current.filter((c) => c !== value)
+          : [...current, value];
+        if (updated.length === 0) next.delete("category");
+        else next.set("category", updated.join(","));
+      }
+    } else if (type === "rating") {
+      next.set("rating", value);
+    } else if (type === "sort") {
+      next.set("sort", value);
     }
+
+    setSearchParams(next);
   };
 
   const onClearFilters = () => {
-    setFilters({ categories: [], rating: 1, sort: "" });
     setSearchParams({});
-    clearSearch();
   };
 
-  // Single unified filtering — no more dual categoryId + filters.categories
-  let filteredProducts = products;
+  // Shared filter logic : used for BOTH keyword results and AI fallback results,
+  // so filters (category, rating, sort) apply no matter which source produced the list.
+  const applyFilters = (list) => {
+    let result = list ?? [];
 
-  if (filters.categories.length > 0) {
-    if (filters.categories.includes("All")) {
-      filteredProducts = [...(products ?? [])];
-    } else {
-      filteredProducts = filteredProducts?.filter(({ category }) =>
-        category.some(({ _id }) => filters.categories.includes(_id)),
+    if (categories_selected.length > 0) {
+      result = result.filter(({ category }) =>
+        category.some(({ _id }) => categories_selected.includes(_id)),
       );
     }
-  }
 
-  if (filters.rating > 1) {
-    filteredProducts = filteredProducts?.filter(
-      (p) => p.rating >= filters.rating,
-    );
-  }
+    if (ratingParam > 1) {
+      result = result.filter((p) => p.rating >= ratingParam);
+    }
 
-  if (filters.sort === "low-to-high") {
-    filteredProducts = [...(filteredProducts ?? [])].sort(
-      (a, b) => a.price - b.price,
-    );
-  } else if (filters.sort === "high-to-low") {
-    filteredProducts = [...(filteredProducts ?? [])].sort(
-      (a, b) => b.price - a.price,
-    );
-  }
+    if (sortParam === "low-to-high") {
+      result = [...result].sort((a, b) => a.price - b.price);
+    } else if (sortParam === "high-to-low") {
+      result = [...result].sort((a, b) => b.price - a.price);
+    }
 
-  if (search !== "") {
-    filteredProducts = filteredProducts?.filter((product) =>
-      product.name.toLowerCase().includes(search),
+    return result;
+  };
+
+  let keywordMatched = products;
+  if (searchParam !== "") {
+    keywordMatched = keywordMatched?.filter((product) =>
+      product.name.toLowerCase().includes(searchParam),
     );
   }
+  const filteredProducts = applyFilters(keywordMatched);
 
   const keywordSearchFailed =
-    search !== "" && !loading && !!products && filteredProducts?.length === 0;
+    searchParam !== "" &&
+    !loading &&
+    !!products &&
+    filteredProducts?.length === 0;
 
-  // AI fallback search : only fires when keyword search found nothing
+  // AI fallback search — only fires when keyword search found nothing.
   useEffect(() => {
     if (!keywordSearchFailed) {
       setAiResults(null);
@@ -110,7 +110,7 @@ export const ProductList = () => {
       setAiLoading(true);
       const { data, error } = await postData(
         `${API_BASE_URL}${API_ROUTES.ai.search}`,
-        { query: search },
+        { query: searchParam },
       );
       if (error || !data?.success) {
         setAiResults({ products: [], message: "" });
@@ -119,15 +119,23 @@ export const ProductList = () => {
       }
       setAiLoading(false);
     })();
-  }, [keywordSearchFailed, search]);
+  }, [keywordSearchFailed, searchParam]);
 
   if (loading) return <Loading />;
   if (error) return <Error />;
 
-  const itemsCount = filteredProducts?.length ?? 0;
-  const showAiResults = keywordSearchFailed && aiResults?.products?.length > 0;
+  // Filters (category/rating/sort) apply to AI results exactly the same way.
+  const filteredAiProducts = applyFilters(aiResults?.products);
+  const showAiResults = keywordSearchFailed && filteredAiProducts.length > 0;
 
-  const displayProducts = showAiResults ? aiResults.products : filteredProducts;
+  const displayProducts = showAiResults ? filteredAiProducts : filteredProducts;
+  const itemsCount = displayProducts?.length ?? 0;
+
+  const filtersForSidebar = {
+    categories: categories_selected.length > 0 ? categories_selected : ["All"],
+    rating: ratingParam,
+    sort: sortParam,
+  };
 
   return (
     <>
@@ -138,10 +146,10 @@ export const ProductList = () => {
             <div className="col-12 col-md-3">
               <FilterSidebar
                 categories={categories}
-                filters={filters}
+                filters={filtersForSidebar}
                 onFilterChange={onFilterChange}
                 onClearFilters={onClearFilters}
-                clearSearchParam={() => setSearchParams({})}
+                clearSearchParam={() => onFilterChange("category", "All")}
               />
             </div>
 
@@ -166,7 +174,7 @@ export const ProductList = () => {
                   <span className="fw-semibold">
                     No exact matches found, but here are similar products.
                   </span>
-                  {aiResults.message && (
+                  {aiResults?.message && (
                     <span className="text-muted"> {aiResults.message}</span>
                   )}
                 </div>
